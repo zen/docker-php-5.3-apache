@@ -1,10 +1,10 @@
 FROM debian:jessie
-MAINTAINER https://github.com/cristianorsolin/docker-php-5.3-apache
 
 # persistent / runtime deps
 RUN apt-get update && apt-get install -y --no-install-recommends \
       ca-certificates \
       curl \
+      libjpeg62-turbo-dev \
       librecode0 \
       libmysqlclient-dev \
       libsqlite3-0 \
@@ -40,10 +40,10 @@ COPY apache2.conf /etc/apache2/apache2.conf
 ENV PHP_INI_DIR /etc/php5/apache2
 RUN mkdir -p $PHP_INI_DIR/conf.d
 
-ENV GPG_KEYS 0B96609E270F565C13292B24C13C70B87267B52D 0A95E9A026542D53835E3F3A7DEC4E69FC9C83D7 0E604491
+ENV GPG_KEYS 8657ABB260F056B1E5190839D9C4D26D0E604491 0A95E9A026542D53835E3F3A7DEC4E69FC9C83D7 0E604491
 RUN set -xe \
   && for key in $GPG_KEYS; do \
-    gpg --keyserver pgp.mit.edu --recv-keys "$key"; \
+    gpg --keyserver pool.sks-keyservers.net --recv-keys "$key"; \
   done
 
 # compile openssl, otherwise --with-openssl won't work
@@ -87,6 +87,7 @@ RUN buildDeps=" \
             $(command -v apxs2 > /dev/null 2>&1 && echo '--with-apxs2=/usr/bin/apxs2' || true) \
             --with-config-file-path="$PHP_INI_DIR" \
             --with-config-file-scan-dir="$PHP_INI_DIR/conf.d" \
+            --with-jpeg-dir=/usr/lib \
             --enable-ftp \
             --enable-mbstring \
             --enable-mysqlnd \
