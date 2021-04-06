@@ -1,0 +1,5 @@
+FROM draggho/docker-php5.3:base-0.0.2
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN a2enmod deflate env headers rewrite
